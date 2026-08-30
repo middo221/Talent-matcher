@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div style="max-width: 480px; margin: var(--space-6) auto 0;">
+    <h1 style="text-align: center;">Sign up as an employer</h1>
+    <p style="text-align: center; color: var(--color-text-muted); margin-bottom: var(--space-5);">
+      You'll be able to post jobs after logging in.
+    </p>
+    <div class="form-card">
+      <form method="post">
+        <label>Email
+          <input type="email" name="email" required placeholder="hiring@yourcompany.com">
+        </label>
+        <label>Password
+          <input type="password" name="password" required>
+        </label>
+        <button type="submit" style="width: 100%; margin-top: var(--space-3);">Create account</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

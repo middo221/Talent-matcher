@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Browse candidates</h1>
+
+  <div class="toolbar">
+    <form method="get" action="{{ url_for('candidates_browse') }}">
+      <div class="toolbar-row">
+        <label>Keyword
+          <input name="q" value="{{ request.args.get('q', '') }}"
+                 placeholder="e.g. backend, senior">
+        </label>
+        <label>Skill contains
+          <input name="skill" value="{{ request.args.get('skill', '') }}"
+                 placeholder="e.g. python">
+        </label>
+        <label>Education
+          <select name="education">
+            <option value="">Any</option>
+            {% for opt in ['High School','Associate','Bachelor','Master','PhD'] %}
+              <option {% if request.args.get('education') == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Min years
+          <input type="number" name="min_years" min="0"
+                 value="{{ request.args.get('min_years', '') }}">
+        </label>
+      </div>
+      <div class="toolbar-row" style="margin-top: var(--space-3);">
+        <button type="submit">Apply filters</button>
+        {% set has_filter = request.args.get('q') or request.args.get('skill') or request.args.get('education') or request.args.get('min_years') %}
+        {% if has_filter %}
+          <a class="toolbar-clear" href="{{ url_for('candidates_browse') }}">Clear all</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  {% if candidates %}
+    <div class="results-header">
+      <span>
+        <strong style="color: var(--color-text);">{{ candidates|length }}</strong>
+        candidate{{ '' if candidates|length == 1 else 's' }}
+        {% if has_filter %}matching your filters{% else %}available{% endif %}
+      </span>
+    </div>
+
+    {% for c in candidates %}
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">{{ c['full_name'] }}</h2>
+            {% if c['major'] %}<span class="card-company">{{ c['major'] }}</span>{% endif %}
+          </div>
+        </div>
+        <div class="card-meta">
+          <span>{{ c['preferred_mode'] }}</span>
+          <span>{{ c['preferred_location'] or 'Location flexible' }}</span>
+          <span>{{ c['years_experience'] }} years experience</span>
+          <span>{{ c['education'] or 'Education not specified' }}</span>
+        </div>
+        {% if c['skills'] %}
+          <div class="card-skills"><strong>Skills</strong> &nbsp; {{ c['skills'] }}</div>
+        {% endif %}
+        {% if c['work_experience'] %}
+          <p class="card-description">
+            {{ c['work_experience'][:250] }}{% if c['work_experience']|length > 250 %}…{% endif %}
+          </p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      {% if has_filter %}
+        <p>No candidates match your filters.</p>
+        <p style="margin-top: var(--space-3);">
+          <a class="btn btn-secondary" href="{{ url_for('candidates_browse') }}">Clear filters</a>
+        </p>
+      {% else %}
+        <p>No candidates have signed up yet.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

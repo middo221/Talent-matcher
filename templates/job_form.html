@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+  {% if record %}
+    <h1>Edit job</h1>
+    <form method="post" action="{{ url_for('job_edit', job_id=record['id']) }}">
+  {% else %}
+    <h1>Post a job</h1>
+    <p style="color: var(--color-text-muted); margin-bottom: var(--space-5);">
+      Write a clear description — candidates use keywords here to find your posting.
+    </p>
+    <form method="post" action="{{ url_for('job_new') }}">
+  {% endif %}
+
+    <div class="form-card">
+      <div class="form-section">
+        <h3>Position</h3>
+        <label>Job title
+          <input name="title" value="{{ record['title'] if record else '' }}" required>
+        </label>
+        <label>Company
+          <input name="company" value="{{ record['company'] if record else '' }}" required>
+        </label>
+        <label>Job description
+          <textarea name="description" rows="6" required>{{ record['description'] if record else '' }}</textarea>
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h3>Requirements</h3>
+        <label>Required education
+          <select name="required_education">
+            <option value="">--</option>
+            {% for opt in ['High School','Associate','Bachelor','Master','PhD'] %}
+              <option {% if record and record['required_education'] == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Required skills (comma-separated)
+          <input name="required_skills" value="{{ record['required_skills'] if record else '' }}"
+                 placeholder="python, sql, react">
+        </label>
+        <label>Years of experience required
+          <input type="number" name="years_experience" min="0"
+                 value="{{ record['years_experience'] if record else 0 }}">
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h3>Logistics</h3>
+        <label>Work mode
+          <select name="work_mode">
+            {% for opt in ['Remote','On-site','Hybrid'] %}
+              <option {% if record and record['work_mode'] == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Location
+          <input name="location" value="{{ record['location'] if record else '' }}"
+                 placeholder="e.g. Boston, MA">
+        </label>
+      </div>
+
+      <button type="submit">{{ 'Save changes' if record else 'Post job' }}</button>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin-left: var(--space-2);">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

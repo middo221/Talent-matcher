@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Edit profile</h1>
+  <p style="color: var(--color-text-muted); margin-bottom: var(--space-6);">
+    Keep your profile current to get better recommendations.
+  </p>
+
+  <div class="form-card">
+    <form method="post">
+      <div class="form-section">
+        <h3>Profile</h3>
+        <label>Full name
+          <input name="full_name" value="{{ record['full_name'] or '' }}" required>
+        </label>
+        <label>Contact (phone or alternate email)
+          <input name="contact" value="{{ record['contact'] or '' }}">
+        </label>
+        <label>Education
+          <select name="education">
+            <option value="">--</option>
+            {% for opt in ['High School','Associate','Bachelor','Master','PhD'] %}
+              <option {% if record['education'] == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Major / field of study
+          <input name="major" value="{{ record['major'] or '' }}">
+        </label>
+        <label>Years of experience
+          <input type="number" name="years_experience" min="0"
+                 value="{{ record['years_experience'] or 0 }}">
+        </label>
+        <label>Work experience
+          <textarea name="work_experience" rows="4">{{ record['work_experience'] or '' }}</textarea>
+        </label>
+        <label>Skills (comma-separated)
+          <input name="skills" value="{{ record['skills'] or '' }}" placeholder="python, sql, react">
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h3>Preferences</h3>
+        <label>Preferred working mode
+          <select name="preferred_mode">
+            {% for opt in ['Remote','On-site','Hybrid'] %}
+              <option {% if record['preferred_mode'] == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Preferred location
+          <input name="preferred_location" value="{{ record['preferred_location'] or '' }}">
+        </label>
+      </div>
+
+      <button type="submit">Save changes</button>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin-left: var(--space-2);">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

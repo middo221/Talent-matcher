@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Dashboard</h1>
+  <p style="color: var(--color-text-muted);">
+    Signed in as <strong>{{ user['email'] }}</strong> ({{ user['role'] }}).
+  </p>
+
+  {% if user['role'] == 'employer' %}
+    <h3 style="margin-top: var(--space-6);">Recommendations</h3>
+    <ul class="action-list">
+      <li><a class="action-primary" href="{{ url_for('candidates_recommended') }}">Recommended candidates →</a></li>
+    </ul>
+
+    <h3 style="margin-top: var(--space-6);">Manage jobs</h3>
+    <ul class="action-list">
+      <li><a href="{{ url_for('job_new') }}">Post a new job</a></li>
+      <li><a href="{{ url_for('jobs_mine') }}">My jobs</a></li>
+      <li><a href="{{ url_for('candidates_browse') }}">Browse candidates</a></li>
+    </ul>
+  {% else %}
+    <h3 style="margin-top: var(--space-6);">Recommendations</h3>
+    <ul class="action-list">
+      <li><a class="action-primary" href="{{ url_for('jobs_recommended') }}">Recommended jobs for me →</a></li>
+    </ul>
+
+    <h3 style="margin-top: var(--space-6);">Get started</h3>
+    <ul class="action-list">
+      <li><a href="{{ url_for('profile_edit') }}">Edit my profile</a></li>
+      <li><a href="{{ url_for('jobs_browse') }}">Browse all jobs</a></li>
+    </ul>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Recommended for you</h1>
+  <p style="color: var(--color-text-muted); margin-bottom: var(--space-6);">
+    Ranked by how closely each job matches your profile.
+    <a href="{{ url_for('profile_edit') }}">Update your profile</a> to improve results.
+  </p>
+
+  {% if ranked %}
+    <div class="results-header">
+      <span>Top <strong style="color: var(--color-text);">{{ ranked|length }}</strong> match{{ 'es' if ranked|length != 1 else '' }}</span>
+    </div>
+
+    {% for s, reasons, job in ranked %}
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">{{ job['title'] }}</h2>
+            <span class="card-company">{{ job['company'] }}</span>
+          </div>
+          <span class="badge badge-match">Match: {{ s }}</span>
+        </div>
+        <div class="card-meta">
+          <span>{{ job['work_mode'] }}</span>
+          <span>{{ job['location'] or 'Location not specified' }}</span>
+          <span>{{ job['years_experience'] }}+ years</span>
+          <span>{{ job['required_education'] or 'Any education' }}</span>
+        </div>
+        {% if job['required_skills'] %}
+          <div class="card-skills"><strong>Skills</strong> &nbsp; {{ job['required_skills'] }}</div>
+        {% endif %}
+        <p class="card-description">
+          {{ job['description'][:250] }}{% if job['description']|length > 250 %}…{% endif %}
+        </p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      <p>No matching jobs right now.</p>
+      <p style="margin-top: var(--space-3);">
+        Try updating your skills, location, or experience —
+        or <a href="{{ url_for('jobs_browse') }}">browse all jobs</a>.
+      </p>
+    </div>
+  {% endif %}
+{% endblock %}

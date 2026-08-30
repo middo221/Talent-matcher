@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Recommended candidates</h1>
+
+  {% if not my_jobs %}
+    <div class="empty">
+      <p>You haven't posted any jobs yet.</p>
+      <p style="margin-top: var(--space-3);">
+        <a class="btn" href="{{ url_for('job_new') }}">Post your first job</a>
+      </p>
+    </div>
+  {% else %}
+    <div class="toolbar">
+      <form method="get" action="{{ url_for('candidates_recommended') }}">
+        <div class="toolbar-row">
+          <label>Show matches for
+            <select name="job_id" onchange="this.form.submit()">
+              {% for j in my_jobs %}
+                <option value="{{ j['id'] }}"
+                        {% if selected_job and j['id'] == selected_job['id'] %}selected{% endif %}>
+                  {{ j['title'] }} &mdash; {{ j['company'] }}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+          <noscript><button type="submit">Show matches</button></noscript>
+        </div>
+      </form>
+    </div>
+
+    <p style="color: var(--color-text-muted); margin-bottom: var(--space-5);">
+      Ranked by fit with <strong style="color: var(--color-text);">{{ selected_job['title'] }}</strong>.
+    </p>
+
+    {% if ranked %}
+      <div class="results-header">
+        <span>Top <strong style="color: var(--color-text);">{{ ranked|length }}</strong> match{{ 'es' if ranked|length != 1 else '' }}</span>
+      </div>
+
+      {% for s, reasons, c in ranked %}
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">{{ c['full_name'] }}</h2>
+              {% if c['major'] %}<span class="card-company">{{ c['major'] }}</span>{% endif %}
+            </div>
+            <span class="badge badge-match">Match: {{ s }}</span>
+          </div>
+          <div class="card-meta">
+            <span>{{ c['preferred_mode'] }}</span>
+            <span>{{ c['preferred_location'] or 'Location flexible' }}</span>
+            <span>{{ c['years_experience'] }} years experience</span>
+            <span>{{ c['education'] or 'Education not specified' }}</span>
+          </div>
+          {% if c['skills'] %}
+            <div class="card-skills"><strong>Skills</strong> &nbsp; {{ c['skills'] }}</div>
+          {% endif %}
+          {% if c['work_experience'] %}
+            <p class="card-description">
+              {{ c['work_experience'][:250] }}{% if c['work_experience']|length > 250 %}…{% endif %}
+            </p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty">
+        <p>No candidates currently match this job.</p>
+        <p style="margin-top: var(--space-3);">
+          <a class="btn btn-secondary" href="{{ url_for('candidates_browse') }}">Browse all candidates</a>
+        </p>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Browse jobs</h1>
+
+  <div class="toolbar">
+    <form method="get" action="{{ url_for('jobs_browse') }}">
+      <div class="toolbar-row">
+        <label>Search job descriptions
+          <input name="q" value="{{ request.args.get('q', '') }}"
+                 placeholder="e.g. python, remote, machine learning">
+        </label>
+        <button type="submit">Search</button>
+        {% if request.args.get('q') %}
+          <a class="toolbar-clear" href="{{ url_for('jobs_browse') }}">Clear</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  {% if jobs %}
+    <div class="results-header">
+      <span>
+        <strong style="color: var(--color-text);">{{ jobs|length }}</strong>
+        job{{ '' if jobs|length == 1 else 's' }}
+        {% if request.args.get('q') %}matching "{{ request.args.get('q') }}"{% else %}available{% endif %}
+      </span>
+    </div>
+
+    {% for job in jobs %}
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">{{ job['title'] }}</h2>
+            <span class="card-company">{{ job['company'] }}</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span>{{ job['work_mode'] }}</span>
+          <span>{{ job['location'] or 'Location not specified' }}</span>
+          <span>{{ job['years_experience'] }}+ years</span>
+          <span>{{ job['required_education'] or 'Any education' }}</span>
+        </div>
+        {% if job['required_skills'] %}
+          <div class="card-skills"><strong>Skills</strong> &nbsp; {{ job['required_skills'] }}</div>
+        {% endif %}
+        <p class="card-description">
+          {{ job['description'][:250] }}{% if job['description']|length > 250 %}…{% endif %}
+        </p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      {% if request.args.get('q') %}
+        <p>No jobs match your search.</p>
+        <p style="margin-top: var(--space-3);">
+          <a class="btn btn-secondary" href="{{ url_for('jobs_browse') }}">Clear search</a>
+        </p>
+      {% else %}
+        <p>No jobs posted yet. Check back later!</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

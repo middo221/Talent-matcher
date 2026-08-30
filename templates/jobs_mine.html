@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-5);">
+    <h1 style="margin: 0;">My jobs</h1>
+    <a class="btn" href="{{ url_for('job_new') }}">Post a job</a>
+  </div>
+
+  {% if jobs %}
+    {% for job in jobs %}
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">{{ job['title'] }}</h2>
+            <span class="card-company">{{ job['company'] }}</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span>{{ job['work_mode'] }}</span>
+          <span>{{ job['location'] or 'Location not specified' }}</span>
+          <span>{{ job['years_experience'] }}+ years</span>
+          <span>{{ job['required_education'] or 'Any education' }}</span>
+        </div>
+        {% if job['required_skills'] %}
+          <div class="card-skills"><strong>Skills</strong> &nbsp; {{ job['required_skills'] }}</div>
+        {% endif %}
+        <div class="card-actions">
+          <a class="btn btn-secondary" href="{{ url_for('job_edit', job_id=job['id']) }}">Edit</a>
+          <form method="post"
+                action="{{ url_for('job_delete', job_id=job['id']) }}"
+                onsubmit="return confirm('Delete this job? This cannot be undone.');">
+            <button type="submit" class="btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      <p>You haven't posted any jobs yet.</p>
+      <p style="margin-top: var(--space-3);">
+        <a class="btn" href="{{ url_for('job_new') }}">Post your first job</a>
+      </p>
+    </div>
+  {% endif %}
+{% endblock %}
